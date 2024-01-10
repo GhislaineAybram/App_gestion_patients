@@ -9,7 +9,7 @@ Le projet consiste à développer une application web de gestion de patients.
 ## Aperçu du projet
 
 *La page d'accueil du site*
-![App Screenshot](/screen/app_gestion_accueil.png)
+![App Screenshot](/screen/app_gestion_patients_accueil.png)
 
 *Formulaire de création d'un nouveau patient*
 ![App Screenshot](/screen/app_gestion_patients_nouveau_patient.png)
