@@ -87,6 +87,7 @@
     <script src="main.js"></script>
 
     <script>
+      // va chercher l'id du patient depuis l'url
       const params = new URLSearchParams(window.location.search);
       const patientId = params.get("id");
       getPatientInfo(patientId);

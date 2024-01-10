@@ -1,9 +1,10 @@
 /// <reference lib="dom"/>
+// URL de l'API générée par JSON-SERVER
 var BASE_URL = "http://localhost:3000";
 function $(selector) {
     return document.querySelector(selector);
 }
-// Générer un ID
+// Génére un ID avec le timestamp + nb aléatoire
 var generateUniqueId = function () {
     var timestamp = new Date().getTime();
     var randomNumber = Math.floor(Math.random() * 1000);
@@ -22,6 +23,7 @@ var deletePatient = function (id) {
             if (!response.ok) {
                 throw new Error("Erreur réseau");
             }
+            // mets à jour la liste suite à la suppression
             generatePatientsList();
         })
             .catch(function (error) {
@@ -42,6 +44,7 @@ var generatePatientsList = function () {
         .then(function (patients) {
         for (var _i = 0, patients_1 = patients; _i < patients_1.length; _i++) {
             var patient = patients_1[_i];
+            // crée une nouvelle ligne pour chaque patient de la base de données
             var trElement = document.createElement("tr");
             var cellsHTML = "\n      <td>".concat(patient.id, "</td>\n      <td>").concat(patient.lastname, "</td>\n      <td>").concat(patient.firstname, "</td>\n      <td>").concat(patient.date_of_birth, "</td>\n      <td>\n        <a href=\"fiche.html?id=").concat(patient.id, "\"><button class=\"button-edit\">\n        <svg class=\"svg-icon\" fill=\"none\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"><g stroke=\"#595959\" stroke-linecap=\"round\" stroke-width=\"2\"><path d=\"m20 20h-16\"></path><path clip-rule=\"evenodd\" d=\"m14.5858 4.41422c.781-.78105 2.0474-.78105 2.8284 0 .7811.78105.7811 2.04738 0 2.82843l-8.28322 8.28325-3.03046.202.20203-3.0304z\" fill-rule=\"evenodd\"></path></g></svg>\n        <span class=\"editer\">Editer</span>\n        </button></a>\n      </td>\n      <td>\n        <button class=\"button-delete\" onclick=\"deletePatient(").concat(patient.id, ")\">\n        <svg class=\"svg-icon\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" height=\"20\" width=\"20\" viewBox=\"0 0 50 59\">\n        <path fill=\"#9C0006\" d=\"M0 7.5C0 5.01472 2.01472 3 4.5 3H45.5C47.9853 3 50 5.01472 50 7.5V7.5C50 8.32843 49.3284 9 48.5 9H1.5C0.671571 9 0 8.32843 0 7.5V7.5Z\"></path>\n        <path fill=\"#9C0006\" d=\"M17 3C17 1.34315 18.3431 0 20 0H29.3125C30.9694 0 32.3125 1.34315 32.3125 3V3H17V3Z\"></path>\n        <path fill=\"#9C0006\" d=\"M2.18565 18.0974C2.08466 15.821 3.903 13.9202 6.18172 13.9202H43.8189C46.0976 13.9202 47.916 15.821 47.815 18.0975L46.1699 55.1775C46.0751 57.3155 44.314 59.0002 42.1739 59.0002H7.8268C5.68661 59.0002 3.92559 57.3155 3.83073 55.1775L2.18565 18.0974ZM18.0003 49.5402C16.6196 49.5402 15.5003 48.4209 15.5003 47.0402V24.9602C15.5003 23.5795 16.6196 22.4602 18.0003 22.4602C19.381 22.4602 20.5003 23.5795 20.5003 24.9602V47.0402C20.5003 48.4209 19.381 49.5402 18.0003 49.5402ZM29.5003 47.0402C29.5003 48.4209 30.6196 49.5402 32.0003 49.5402C33.381 49.5402 34.5003 48.4209 34.5003 47.0402V24.9602C34.5003 23.5795 33.381 22.4602 32.0003 22.4602C30.6196 22.4602 29.5003 23.5795 29.5003 24.9602V47.0402Z\" clip-rule=\"evenodd\" fill-rule=\"evenodd\"></path>\n        <path fill=\"#9C0006\" d=\"M2 13H48L47.6742 21.28H2.32031L2 13Z\"></path>\n        </svg>\n        <span class=\"supprimer\">Supprimer</span>\n        </button>\n      </td>\n    ");
             trElement.innerHTML = cellsHTML;
@@ -68,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 dateOfBirth &&
                 placeOfBirth &&
                 profilePictureFile) {
-                var id_1 = generateUniqueId().toString();
+                var id_1 = generateUniqueId();
                 var lastnameFormatted_1 = lastname.toUpperCase();
                 var firstnameFormatted_1 = firstname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase();
                 var dateOfBirthFormatted_1 = dateOfBirth;
@@ -128,6 +131,7 @@ var getPatientInfo = function (patientId) {
         return response.json();
     })
         .then(function (patient) {
+        // Affiche le titre de la fiche patient
         var h2Element = document.getElementById("patient-info");
         h2Element.textContent += "".concat(patient.lastname, " ").concat(patient.firstname);
         var lastnameInput = document.getElementById("lastname");
@@ -151,10 +155,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (editPatientForm) {
         editPatientForm.addEventListener("submit", function (event) {
             event.preventDefault();
-            // Récupération de l'ID du patient
+            // Récupére l'ID du patient
             var params = new URLSearchParams(window.location.search);
             var id = params.get("id");
-            // Récupération de l'URL de l'image actuelle
+            // Récupére l'URL de l'image actuelle
             fetch("".concat(BASE_URL, "/patients/").concat(id))
                 .then(function (response) {
                 if (!response.ok) {
@@ -184,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         firstname: firstnameFormatted,
                         date_of_birth: dateOfBirthFormatted,
                         place_of_birth: placeOfBirthFormatted,
-                        picture: currentPicture, // Utiliser l'URL de l'image actuelle
+                        picture: currentPicture, // Utilise l'URL de l'image actuelle
                     };
                     fetch("".concat(BASE_URL, "/patients/").concat(id), {
                         method: "PUT",
@@ -215,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-// fonction zoom de la photo patient
+// Fonction zoom de la photo patient (depuis le site w3schools)
 var imageZoom = function (imgID, resultID) {
     var img, lens, result, cx, cy;
     img = document.getElementById(imgID);

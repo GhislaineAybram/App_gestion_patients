@@ -1,13 +1,14 @@
 /// <reference lib="dom"/>
 
+// URL de l'API générée par JSON-SERVER
 const BASE_URL = "http://localhost:3000";
 
 function $<T extends HTMLElement>(selector: string): T {
   return document.querySelector(selector) as T;
 }
 
-// Générer un ID
-const generateUniqueId = () => {
+// Génére un ID avec le timestamp + nb aléatoire
+const generateUniqueId = (): string => {
   const timestamp = new Date().getTime();
   const randomNumber = Math.floor(Math.random() * 1000);
   return `${timestamp}${randomNumber}`;
@@ -26,6 +27,7 @@ const deletePatient = (id: number): void => {
         if (!response.ok) {
           throw new Error("Erreur réseau");
         }
+        // mets à jour la liste suite à la suppression
         generatePatientsList();
       })
       .catch((error) => {
@@ -46,6 +48,7 @@ const generatePatientsList = (): void => {
     })
     .then((patients) => {
       for (const patient of patients) {
+        // crée une nouvelle ligne pour chaque patient de la base de données
         const trElement = document.createElement("tr");
         const cellsHTML = `
       <td>${patient.id}</td>
@@ -110,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         placeOfBirth &&
         profilePictureFile
       ) {
-        const id = generateUniqueId().toString();
+        const id = generateUniqueId();
         const lastnameFormatted = lastname.toUpperCase();
         const firstnameFormatted =
           firstname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase();
@@ -179,6 +182,7 @@ const getPatientInfo = (patientId) => {
       return response.json();
     })
     .then((patient) => {
+      // Affiche le titre de la fiche patient
       const h2Element = document.getElementById("patient-info");
       h2Element.textContent += `${patient.lastname} ${patient.firstname}`;
 
@@ -217,11 +221,11 @@ document.addEventListener("DOMContentLoaded", () => {
     editPatientForm.addEventListener("submit", (event) => {
       event.preventDefault();
 
-      // Récupération de l'ID du patient
+      // Récupére l'ID du patient
       const params = new URLSearchParams(window.location.search);
       const id = params.get("id");
 
-      // Récupération de l'URL de l'image actuelle
+      // Récupére l'URL de l'image actuelle
       fetch(`${BASE_URL}/patients/${id}`)
         .then((response) => {
           if (!response.ok) {
@@ -265,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
               firstname: firstnameFormatted,
               date_of_birth: dateOfBirthFormatted,
               place_of_birth: placeOfBirthFormatted,
-              picture: currentPicture, // Utiliser l'URL de l'image actuelle
+              picture: currentPicture, // Utilise l'URL de l'image actuelle
             };
 
             fetch(`${BASE_URL}/patients/${id}`, {
@@ -297,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// fonction zoom de la photo patient
+// Fonction zoom de la photo patient (depuis le site w3schools)
 const imageZoom = (imgID, resultID) => {
   var img, lens, result, cx, cy;
   img = document.getElementById(imgID);
