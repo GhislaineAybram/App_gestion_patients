@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fiche de patient</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <img
+        id="logo"
+        src="https://logolook.net/wp-content/uploads/2023/04/GE-Logo.png"
+      />
+      <h1>Mes patients</h1>
+      <h3>Bienvenue Dr Roger !</h3>
+    </header>
+    <main>
+      <section>
+        <h2 id="patient-info">Fiche de </h2>
+        <form class="editPatient">
+          <fieldset>
+            <label for="lastname"
+              >Nom de famille:
+              <input
+                id="lastname"
+                name="lastname"
+                type="text"
+                value=""
+                onFocus="this.value='';"
+                required
+            /></label>
+            <label for="firstname"
+              >Prénom:
+              <input
+                id="firstname"
+                name="firstname"
+                type="text"
+                value=""
+                onFocus="this.value='';"
+                required
+            /></label>
+            <label for="date-of-birth"
+              >Date de naissance:
+              <input
+                id="date-of-birth"
+                type="date"
+                name="date-of-birth"
+                value=""
+                onFocus="this.value='';"
+                required
+            /></label>
+            <label for="place-of-birth"
+              >Lieu de naissance:
+              <input
+                id="place-of-birth"
+                name="place-of-birth"
+                type="text"
+                value=""
+                onFocus="this.value='';"
+                required
+            /></label>
+            <label for="profile-picture"
+              >Image:
+              <div class="img-zoom-container">
+                <img
+                  id="picture"
+                  src=""
+                  alt="Profile Picture"
+                  style="max-width: 150px; max-height: 150px"
+                />
+                <div id="picture-zoom" class="img-zoom-result"></div>
+              </div>
+              <input
+                id="profile-picture"
+                type="file"
+                name="file"
+                accept="image/*"
+              />
+            </label>
+            <button id="modify-image">Modifier l'image</button>
+          </fieldset>
+          <input type="submit" value="Valider les modifications" />
+        </form>
+      </section>
+    </main>
+    <script src="main.js"></script>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const patientId = params.get("id");
+      getPatientInfo(patientId);
+    </script>
+
+    <script>
+      document.getElementById("picture").onload = function () {
+        imageZoom("picture", "picture-zoom");
+      };
+    </script>
+  </body>
+</html>

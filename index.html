@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mes patients</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <img
+        id="logo"
+        src="https://logolook.net/wp-content/uploads/2023/04/GE-Logo.png"
+      />
+      <h1>Mes patients</h1>
+      <h3>Bienvenue Dr Roger !</h3>
+    </header>
+
+    <main>
+      <section>
+        <h2 id="patients-list">Liste de mes patients</h2>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Identifiant</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Prénom</th>
+              <th scope="col">Date de naissance</th>
+              <th scope="col">Editer</th>
+              <th scope="col">Supprimer</th>
+            </tr>
+          </thead>
+          <tbody id="patients-table-body"></tbody>
+        </table>
+        <a href="form.html"
+          ><button type="button-add" class="button-add">
+            <span class="button-add-text">Nouveau patient</span>
+            <span class="button-add-icon"
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+                stroke="currentColor"
+                height="24"
+                fill="none"
+                class="svg"
+              >
+                <line y2="19" y1="5" x2="12" x1="12"></line>
+                <line y2="12" y1="12" x2="19" x1="5"></line></svg
+            ></span></button
+        ></a>
+      </section>
+    </main>
+    <script src="main.js"></script>
+    <script>
+      generatePatientsList();
+    </script>
+  </body>
+</html>
