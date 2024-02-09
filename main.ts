@@ -14,6 +14,16 @@ const generateUniqueId = (): string => {
   return `${timestamp}${randomNumber}`;
 };
 
+// Définition du patient
+interface Patient {
+  id: string,
+  lastname: string,
+  firstname: string,
+  date_of_birth: string,
+  place_of_birth: string,
+  picture: string,
+}
+
 // Supprime le patient de la base de données
 const deletePatient = (id: number): void => {
   if (confirm("Voulez-vous vraiment supprimer ce patient ?")) {
@@ -74,7 +84,7 @@ const generatePatientsList = (): void => {
       </td>
     `;
         trElement.innerHTML = cellsHTML;
-        tbodyElement.appendChild(trElement);
+        tbodyElement!.appendChild(trElement);
       }
     });
 };
@@ -103,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const profilePictureInput = $<HTMLInputElement>(
         '.createPatient input[id="profile-picture"]'
       );
-      const profilePictureFile = profilePictureInput.files[0];
+      const profilePictureFile = profilePictureInput.files![0];
 
       // Seulement si tous les champs sont remplis le nouveau patient est créé
       if (
@@ -146,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Ajoute un nouveau patient à la base de données
-const createPatient = (patient) => {
+const createPatient = (patient: Patient) => {
   fetch(`${BASE_URL}/patients`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -168,7 +178,7 @@ const createPatient = (patient) => {
 };
 
 // Affiche les données du patient
-const getPatientInfo = (patientId) => {
+const getPatientInfo = (patientId: string) => {
   fetch(`${BASE_URL}/patients/${patientId}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -184,7 +194,7 @@ const getPatientInfo = (patientId) => {
     .then((patient) => {
       // Affiche le titre de la fiche patient
       const h2Element = document.getElementById("patient-info");
-      h2Element.textContent += `${patient.lastname} ${patient.firstname}`;
+      h2Element!.textContent += `${patient.lastname} ${patient.firstname}`;
 
       const lastnameInput = document.getElementById(
         "lastname"
@@ -302,29 +312,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Fonction zoom de la photo patient (depuis le site w3schools)
-const imageZoom = (imgID, resultID) => {
-  var img, lens, result, cx, cy;
-  img = document.getElementById(imgID);
-  result = document.getElementById(resultID);
+const imageZoom = (imgID: string, resultID: string): void => {
+  let img: HTMLImageElement, lens: HTMLElement, result: HTMLElement, cx: number, cy: number;
+  img = document.getElementById(imgID) as HTMLImageElement;
+  result = document.getElementById(resultID)!;
   /* Create lens: */
   lens = document.createElement("DIV");
   lens.setAttribute("class", "img-zoom-lens");
   /* Insert lens: */
-  img.parentElement.insertBefore(lens, img);
+  img.parentElement!.insertBefore(lens, img);
   /* Calculate the ratio between result DIV and lens: */
   cx = result.offsetWidth / lens.offsetWidth;
   cy = result.offsetHeight / lens.offsetHeight;
   /* Set background properties for the result DIV */
-  result.style.backgroundImage = "url('" + img.src + "')";
-  result.style.backgroundSize = img.width * cx + "px " + img.height * cy + "px";
+  result.style.backgroundImage = `url('${img.src}')`;
+  result.style.backgroundSize = `${img.width * cx}px ${img.height * cy}px`;
   /* Execute a function when someone moves the cursor over the image, or the lens: */
   lens.addEventListener("mousemove", moveLens);
   img.addEventListener("mousemove", moveLens);
   /* And also for touch screens: */
   lens.addEventListener("touchmove", moveLens);
   img.addEventListener("touchmove", moveLens);
-  function moveLens(e) {
-    var pos, x, y;
+
+  function moveLens(e: MouseEvent | TouchEvent): void {
+    let pos: { x: number; y: number }, x: number, y: number;
     /* Prevent any other actions that may occur when moving over the image */
     e.preventDefault();
     /* Get the cursor's x and y positions: */
@@ -346,24 +357,25 @@ const imageZoom = (imgID, resultID) => {
       y = 0;
     }
     /* Set the position of the lens: */
-    lens.style.left = x + "px";
-    lens.style.top = y + "px";
+    lens.style.left = `${x}px`;
+    lens.style.top = `${y}px`;
     /* Display what the lens "sees": */
-    result.style.backgroundPosition = "-" + x * cx + "px -" + y * cy + "px";
+    result.style.backgroundPosition = `-${x * cx}px -${y * cy}px`;
   }
-  function getCursorPos(e) {
-    var a,
-      x = 0,
-      y = 0;
-    e = e || window.event;
+
+  function getCursorPos(e: MouseEvent | TouchEvent): { x: number; y: number } {
+    let a: DOMRect,
+      x: number = 0,
+      y: number = 0;
+    e = e || window.event as MouseEvent | TouchEvent;
     /* Get the x and y positions of the image: */
     a = img.getBoundingClientRect();
     /* Calculate the cursor's x and y coordinates, relative to the image: */
-    x = e.pageX - a.left;
-    y = e.pageY - a.top;
+    x = (e instanceof MouseEvent ? e.pageX : e.touches[0].pageX) - a.left;
+    y = (e instanceof MouseEvent ? e.pageY : e.touches[0].pageY) - a.top;
     /* Consider any page scrolling: */
-    x = x - window.pageXOffset;
-    y = y - window.pageYOffset;
+    x = x - window.scrollX;
+    y = y - window.scrollY;
     return { x: x, y: y };
   }
 };
